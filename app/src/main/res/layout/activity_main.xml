@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
@@ -22,6 +22,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!--搜索框-->
+        <!--        <ImageView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="50dp"-->
+        <!--            android:src="@drawable/searchbar"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintHorizontal_bias="1.0"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/top_menu"-->
+        <!--            app:tint="#FFFFFF" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/card_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/top_menu"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navi_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+             />
 
         <include
             android:id="@+id/bottom_navi_menu"
@@ -35,17 +55,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <LinearLayout
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="#FFFFFF"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="菜单"
-            android:padding="16dp"/>
+            android:padding="16dp"
+            android:text="菜单" />
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

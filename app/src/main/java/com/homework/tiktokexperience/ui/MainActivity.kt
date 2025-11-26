@@ -13,7 +13,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.homework.tiktokexperience.R
+import com.homework.tiktokexperience.ui.card.CardBean
+import com.homework.tiktokexperience.ui.card.TestAdapter
 import com.homework.tiktokexperience.ui.top.TopMenuAdapter
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +34,25 @@ class MainActivity : AppCompatActivity() {
         }
         initBottom()
         initTop()
+        initCard()
+    }
+
+    private fun initCard() {
+        var cardBean = CardBean(
+            "https://picsum.photos/200/300",
+            "标题",
+            "https://picsum.photos/200/300",
+            "用户名",
+            9999
+        )
+        val listOf = listOf(cardBean, cardBean, cardBean, cardBean, cardBean)
+        val recyclerView = findViewById<RecyclerView>(R.id.card_recyclerview).apply {
+            layoutManager = StaggeredGridLayoutManager(
+                2,
+                StaggeredGridLayoutManager.VERTICAL
+            )
+            adapter = TestAdapter(listOf)
+        }
     }
 
     private fun initTop() {
