@@ -34,6 +34,7 @@ class TopMenuAdapter(private var menu: List<String>) :
         }
     }
 
+
     override fun getItemCount(): Int = menu.size
 
 }

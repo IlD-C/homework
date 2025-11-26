@@ -4,10 +4,13 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.homework.tiktokexperience.R
@@ -31,8 +34,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initTop() {
+        //reacyclerview初始化
         val menuText = listOf("精选", "经验", "直播", "热点", "推荐", "商城", "本地")//可改
-        val linearLayoutManager = LinearLayoutManager(this).apply { orientation = LinearLayoutManager.HORIZONTAL }
+        val linearLayoutManager =
+            LinearLayoutManager(this).apply { orientation = LinearLayoutManager.HORIZONTAL }
         val topMenuAdapter = TopMenuAdapter(menuText)
         val view = findViewById<RecyclerView>(R.id.top_recyclerview).apply {
             layoutManager = linearLayoutManager
@@ -49,6 +54,40 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+        view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                checkPosition()
+            }
+
+            private fun checkPosition() {
+                // 获取最后一个完全可见的item位置
+                val lastPosition: Int =
+                    linearLayoutManager.findLastCompletelyVisibleItemPosition()
+                val itemCount = linearLayoutManager.itemCount
+                val isAtEnd = (lastPosition == itemCount - 1)
+                if (isAtEnd) {
+                    // 已到达末尾，隐藏箭头
+                    this@MainActivity.findViewById<ImageView>(R.id.arrow).visibility = View.GONE
+                } else {
+                    // 未到达末尾，显示箭头
+                    this@MainActivity.findViewById<ImageView>(R.id.arrow).visibility = View.VISIBLE
+                }
+
+            }
+        })
+        //侧面菜单监听
+        findViewById<ImageView>(R.id.top_side_menu).apply {
+            setOnClickListener {
+                val drawerLayout =
+                    this@MainActivity.findViewById<View>(R.id.drawer_layout) as DrawerLayout
+                if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.openDrawer(GravityCompat.START)
+                }
+            }
+        }
+        //搜索按钮设置
+        findViewById<ImageView>(R.id.top_search).apply {}
     }
 
     private fun initBottom() {

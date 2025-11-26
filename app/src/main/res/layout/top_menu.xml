@@ -1,29 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="50dp"
+    android:gravity="center_vertical"
 
-    android:orientation="horizontal"
-    android:background="@color/black">
+    android:background="@color/black"
+    android:orientation="horizontal">
 
     <!--todo 菜单图片待改-->
     <ImageView
+        android:id="@+id/top_side_menu"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:contentDescription="@string/menu"
+        android:padding="12dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/menu"
+        app:tint="#FFFFFF"
+        android:paddingStart="10dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/top_recyclerview"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="5dp"
-        android:gravity="center_vertical"
-        android:clipToPadding="false"
-        />
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/top_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:padding="5dp" />
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:background="@color/black"
+            android:focusable="true"
+            android:padding="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow"
+            android:visibility="visible"
+            app:tint="#FFFFFF"
+            android:clickable="true"/>
+    </FrameLayout>
 
     <ImageView
+        android:id="@+id/top_search"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:contentDescription="@string/search"
+        android:padding="10dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/search_button"
+        app:tint="#FFFFFF"
+        android:paddingEnd="10dp"/>
 </LinearLayout>
