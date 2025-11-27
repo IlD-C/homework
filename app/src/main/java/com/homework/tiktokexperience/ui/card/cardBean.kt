@@ -3,7 +3,10 @@ package com.homework.tiktokexperience.ui.card
 import java.net.URL
 
 data class CardBean(
+    val id: String,//唯一id
     val imageURL: String,
+    val imageHigh: Int,
+    val imageWidth: Int,
     val title: String,
     val iconURL: String,
     val name: String,
@@ -19,6 +22,7 @@ data class CardBean(
                 && name == cardBean.name
                 && loveCount == cardBean.loveCount
     }
+
     override fun hashCode(): Int {
         return imageURL.hashCode() + title.hashCode() + iconURL.hashCode() + name.hashCode() + loveCount.hashCode();
     }

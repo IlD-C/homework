@@ -38,8 +38,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCard() {
-        var cardBean = CardBean(
+        var cardBean = CardBean("",
             "https://picsum.photos/200/300",
+            1,1,
             "标题",
             "https://picsum.photos/200/300",
             "用户名",
@@ -51,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                 2,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = TestAdapter(listOf)
+            adapter = TestAdapter(context,listOf)
         }
     }
 
