@@ -2,6 +2,7 @@ package com.homework.tiktokexperience
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -23,9 +24,6 @@ import com.homework.tiktokexperience.viewmodel.State
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
-    init {
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -56,32 +54,46 @@ class MainActivity : AppCompatActivity() {
                 2,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            cardAdapter = CardAdapter(context) { view,cardBean -> viewModel.touchLove(view,cardBean)}              // todo 点击加减爱心事件
+            this.layoutManager = layoutManager
+            cardAdapter = CardAdapter(context) { view, cardBean ->
+                viewModel.touchLove(
+                    view,
+                    cardBean
+                )
+            }              // todo 点击加减爱心事件
             adapter = cardAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val intArray = IntArray(2)
                     layoutManager.findLastVisibleItemPositions(intArray)
-                    if(intArray.maxOrNull() == cardAdapter.itemCount -1){
+                    if (intArray.maxOrNull() == cardAdapter.itemCount - 1) {
                         viewModel.loadData()
                     }
                 }
+
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化
             })
         }
 
+        viewModel.loadData()//init
+        Log.d("MainActivity", "initCard:viewMode_linit")
+        viewModel.state.observe(this) {
+            when (it) {
+                is State.success -> {
+                    Log.d("MainActivity", "initCard:state_success")
+                    cardAdapter.submitList(it.items)
+                    Log.d("MainActivity", "initCard:${it.items.toString()}")
+                    findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
+                }
 
-        viewModel.state.observe(this){
-            when(it){
-                is State.success ->{cardAdapter.submitList(it.items)
-                    findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false}
-                is State.Loading ->{//todo loading显示一定时常自动停止
+                is State.Loading -> {//todo loading显示一定时常自动停止
 
                 }
-                is State.Error->{
+
+                is State.Error -> {
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
                 }
             }

@@ -1,6 +1,7 @@
 package com.homework.tiktokexperience.ui.card
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,6 +52,7 @@ class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> 
 
         fun bind(position: Int) {
             val bean: CardBean = getItem(position)
+            Log.d("CardAdapter", "bind: $bean")
             var ratio: Double = 1.0 * bean.imageHigh / bean.imageWidth
             if (ratio < 0.7) {//自适应的图片高
                 ratio = 0.7
@@ -81,11 +83,13 @@ class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
-        var inflate = LayoutInflater.from(parent.context).inflate(R.layout.card_item, parent, false)
+        val inflate = LayoutInflater.from(parent.context).inflate(R.layout.card_item, parent, false)
+        Log.d("Adapter", "onCreateViewHolder:$inflate")
         return CardViewHolder(inflate)
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
+        Log.d("CardAdapter", "onBindViewHolder: $position")
         holder.bind(position)
     }
 }

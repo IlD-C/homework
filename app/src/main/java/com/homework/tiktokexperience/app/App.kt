@@ -1,14 +1,14 @@
 package com.homework.tiktokexperience.app
 
 import android.app.Application
+import android.content.Context
 
 class App : Application() {
-
     companion object{
-        const val userId:String = "";
+        lateinit var context: Context
     }
     override fun onCreate() {
         super.onCreate()
-
+        context = applicationContext
     }
 }

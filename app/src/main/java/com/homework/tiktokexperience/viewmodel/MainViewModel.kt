@@ -13,7 +13,8 @@ import com.homework.tiktokexperience.repository.MyRepository
 import com.homework.tiktokexperience.ui.card.CardBean
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val repository: MyRepository) : ViewModel() {
+class MainViewModel() : ViewModel() {
+    private val repository = MyRepository
     private val innerState = MutableLiveData<State>()
     val state: LiveData<State> = innerState
     private val currentList = mutableListOf<CardBean>()

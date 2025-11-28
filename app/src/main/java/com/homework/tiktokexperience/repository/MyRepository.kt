@@ -6,11 +6,11 @@ import com.homework.tiktokexperience.model.cardPageData
 import com.homework.tiktokexperience.network.CardNetWork
 import com.homework.tiktokexperience.ui.card.CardBean
 
-class MyRepository {
+object MyRepository {
 
     suspend fun getPage(page: Int): Result<List<CardBean>> {
         try {
-            var data = CardNetWork.cardService.getData(page, App.userId)
+            var data = CardNetWork.cardService.getData(page, "userId")
             return Result.success(data.data)
         } catch (e: Exception) {
             return Result.failure(e)
@@ -19,8 +19,8 @@ class MyRepository {
 
     suspend fun touchLove(id: String): Boolean {
         try {
-            var data = CardNetWork.cardService.changeLove(id, App.userId)
-            return data
+            var data = CardNetWork.cardService.changeLove(id, "userId")
+            return data.success
         } catch (e: Exception) {
             return false
         }
