@@ -6,10 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.homework.tiktokexperience.repository.MyRepository
 import com.homework.tiktokexperience.ui.card.CardBean
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val repositry: MyRepository) : ViewModel() {
+class MainViewModel(private val repository: MyRepository) : ViewModel() {
     private val innerState = MutableLiveData<State>()
     val state: LiveData<State> = innerState
     private val currentList = mutableListOf<CardBean>()
@@ -22,7 +21,7 @@ class MainViewModel(private val repositry: MyRepository) : ViewModel() {
                 currentList.clear()
             }
             try {
-                val newItems = repositry.getPage(page)
+                val newItems = repository.getPage(page)
                 currentList.addAll(newItems)
                 innerState.value = State.success(currentList.toList())//将currentList转换为不可变列表且为新表
                 page++

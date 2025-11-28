@@ -1,4 +1,4 @@
-package com.homework.tiktokexperience.ui
+package com.homework.tiktokexperience
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -14,12 +15,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.homework.tiktokexperience.R
-import com.homework.tiktokexperience.ui.card.CardBean
-import com.homework.tiktokexperience.ui.card.TestAdapter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.homework.tiktokexperience.ui.card.CardAdapter
 import com.homework.tiktokexperience.ui.top.TopMenuAdapter
+import com.homework.tiktokexperience.viewmodel.MainViewModel
+import com.homework.tiktokexperience.viewmodel.State
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
     init {
     }
 
@@ -38,21 +41,54 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initCard() {
-        var cardBean = CardBean("",
-            "https://picsum.photos/200/300",
-            1,1,
-            "标题",
-            "https://picsum.photos/200/300",
-            "用户名",
-            9999
-        )
-        val listOf = listOf(cardBean, cardBean, cardBean, cardBean, cardBean)
+//        var cardBean = CardBean("",
+//            "https://picsum.photos/200/300",
+//            1,1,
+//            "标题",
+//            "https://picsum.photos/200/300",
+//            "用户名",
+//            9999
+//        )
+//        val listOf = listOf(cardBean, cardBean, cardBean, cardBean, cardBean)
+        val cardAdapter: CardAdapter
         val recyclerView = findViewById<RecyclerView>(R.id.card_recyclerview).apply {
-            layoutManager = StaggeredGridLayoutManager(
+            val layoutManager = StaggeredGridLayoutManager(
                 2,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            adapter = TestAdapter(context,listOf)
+            cardAdapter = CardAdapter(context) { view -> }              // todo 点击加减爱心事件
+            adapter = cardAdapter
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val intArray = IntArray(2)
+                    layoutManager.findLastVisibleItemPositions(intArray)
+                    if(intArray.maxOrNull() == cardAdapter.itemCount -1){
+                        viewModel.loadData()
+                    }
+                }
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                }//todo滑动条件变化
+            })
+        }
+
+
+        viewModel.state.observe(this){
+            when(it){
+                is State.success ->{cardAdapter.submitList(it.items)
+                    findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false}
+                is State.Loading ->{//todo loading显示一定时常自动停止
+
+                }
+                is State.Error->{
+                    findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
+                }
+            }
+
+        }
+        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).setOnRefreshListener {
+            viewModel.loadData(true)
         }
     }
 

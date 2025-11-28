@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.homework.tiktokexperience.R
 
-class CardAdapter(context: Context, private val onItemClick: (CardBean) -> Unit) :
+class CardAdapter(context: Context, private val onItemClick: (View) -> Unit) :
     ListAdapter<CardBean, CardAdapter.CardViewHolder>(CardDiffCallback()) {
     private val itemWidth: Int//item宽度px
 
@@ -46,6 +46,7 @@ class CardAdapter(context: Context, private val onItemClick: (CardBean) -> Unit)
             title.text = bean.title
             name.text = bean.name
             loveCount.text = bean.loveCount.toString()
+            itemView.findViewById<ImageView>(R.id.loveIcon).setOnClickListener(onItemClick)//在显示文字后可点击
             Glide.with(itemView.context)
                 .load(bean.iconURL)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
