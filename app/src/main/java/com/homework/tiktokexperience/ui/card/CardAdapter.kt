@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.homework.tiktokexperience.R
 
-class CardAdapter(context: Context, private val onItemClick: (View) -> Unit) :
+class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> Unit) :
     ListAdapter<CardBean, CardAdapter.CardViewHolder>(CardDiffCallback()) {
     private val itemWidth: Int//item宽度px
 
@@ -29,12 +29,27 @@ class CardAdapter(context: Context, private val onItemClick: (View) -> Unit) :
     }
 
     inner class CardViewHolder(var itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val image: ImageView = itemView.findViewById(R.id.cardImage)
+        private val title: TextView = itemView.findViewById(R.id.cardTitle)
+        private val icon: ImageView = itemView.findViewById(R.id.userIcon)
+        private val name: TextView = itemView.findViewById(R.id.userName)
+        private val loveIcon: ImageView = itemView.findViewById(R.id.loveIcon)
+        private val loveCount: TextView = itemView.findViewById(R.id.loveCount)
+
+        init {
+            loveIcon.setOnClickListener { v ->
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    val bean: CardBean = getItem(bindingAdapterPosition)
+                    bean.isLove = !bean.isLove
+                    loveIcon.isSelected = bean.isLove//暂时改变
+                    bean.loveCount = if (bean.isLove) bean.loveCount + 1 else bean.loveCount - 1
+                    loveCount.text = bean.loveCount.toString()//string_format改造
+                    onItemClick(v, bean)
+                }
+            }
+        }
+
         fun bind(position: Int) {
-            val image: ImageView = itemView.findViewById(R.id.cardImage)
-            val title: TextView = itemView.findViewById(R.id.cardTitle)
-            val icon: ImageView = itemView.findViewById(R.id.userIcon)
-            val name: TextView = itemView.findViewById(R.id.userName)
-            val loveCount: TextView = itemView.findViewById(R.id.loveCount)
             val bean: CardBean = getItem(position)
             var ratio: Double = 1.0 * bean.imageHigh / bean.imageWidth
             if (ratio < 0.7) {//自适应的图片高
@@ -46,7 +61,7 @@ class CardAdapter(context: Context, private val onItemClick: (View) -> Unit) :
             title.text = bean.title
             name.text = bean.name
             loveCount.text = bean.loveCount.toString()
-            itemView.findViewById<ImageView>(R.id.loveIcon).setOnClickListener(onItemClick)//在显示文字后可点击
+            loveIcon.isSelected = bean.isLove//获取是否点赞过
             Glide.with(itemView.context)
                 .load(bean.iconURL)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))

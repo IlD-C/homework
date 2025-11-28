@@ -10,7 +10,8 @@ data class CardBean(
     val title: String,
     val iconURL: String,
     val name: String,
-    val loveCount: Int
+    var loveCount: Int,
+    var isLove: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -21,9 +22,10 @@ data class CardBean(
                 && iconURL == cardBean.iconURL
                 && name == cardBean.name
                 && loveCount == cardBean.loveCount
+                && isLove == cardBean.isLove
     }
 
     override fun hashCode(): Int {
-        return imageURL.hashCode() + title.hashCode() + iconURL.hashCode() + name.hashCode() + loveCount.hashCode();
+        return imageURL.hashCode() + title.hashCode() + iconURL.hashCode() + name.hashCode() + loveCount.hashCode() + isLove.hashCode();
     }
 }

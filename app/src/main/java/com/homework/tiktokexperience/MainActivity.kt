@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                 2,
                 StaggeredGridLayoutManager.VERTICAL
             )
-            cardAdapter = CardAdapter(context) { view -> }              // todo 点击加减爱心事件
+            cardAdapter = CardAdapter(context) { view,cardBean -> viewModel.touchLove(view,cardBean)}              // todo 点击加减爱心事件
             adapter = cardAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).setOnRefreshListener {
             viewModel.loadData(true)
         }
+
+
     }
 
     private fun initTop() {
