@@ -1,6 +1,7 @@
 package com.homework.tiktokexperience.repository
 
 import android.content.res.Resources
+import android.util.Log
 import com.homework.tiktokexperience.app.App
 import com.homework.tiktokexperience.model.cardPageData
 import com.homework.tiktokexperience.network.CardNetWork
@@ -19,7 +20,8 @@ object MyRepository {
 
     suspend fun touchLove(id: String): Boolean {
         try {
-            var data = CardNetWork.cardService.changeLove(id, "userId")
+            val data = CardNetWork.cardService.changeLove(id, "userId")
+            Log.d("MyRepository", "touch:$data")
             return data.success
         } catch (e: Exception) {
             return false

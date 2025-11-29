@@ -10,11 +10,10 @@ data class CardBean(
     val title: String,
     val iconURL: String,
     val name: String,
-    var loveCount: Int,
-    var isLove: Boolean
+    val loveCount: Int,
+    val isLove: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
         val cardBean = other as CardBean
         return imageURL == cardBean.imageURL

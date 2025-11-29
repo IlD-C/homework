@@ -15,7 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.homework.tiktokexperience.R
 
-class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> Unit) :
+class CardAdapter(context: Context, private val onItemClick: (View, String) -> Unit) :
     ListAdapter<CardBean, CardAdapter.CardViewHolder>(CardDiffCallback()) {
     private val itemWidth: Int//item宽度px
 
@@ -40,12 +40,13 @@ class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> 
         init {
             loveIcon.setOnClickListener { v ->
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                    loveIcon.isSelected = !loveIcon.isSelected//暂时改变
+                    Log.d("CardAdapter", "loveIcon.isSelected: ${loveIcon.isSelected}")
+                    val newCount =
+                        loveCount.text.toString().toInt() + if (loveIcon.isSelected) 1 else -1;
+                    loveCount.text = newCount.toString()//string_format改造
                     val bean: CardBean = getItem(bindingAdapterPosition)
-                    bean.isLove = !bean.isLove
-                    loveIcon.isSelected = bean.isLove//暂时改变
-                    bean.loveCount = if (bean.isLove) bean.loveCount + 1 else bean.loveCount - 1
-                    loveCount.text = bean.loveCount.toString()//string_format改造
-                    onItemClick(v, bean)
+                    onItemClick(v, bean.id)
                 }
             }
         }
@@ -95,11 +96,11 @@ class CardAdapter(context: Context, private val onItemClick: (View,CardBean) -> 
 }
 
 class CardDiffCallback : DiffUtil.ItemCallback<CardBean>() {
-    override fun areItemsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {
+    override fun areItemsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {//整体一致
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {
+    override fun areContentsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {//所有内容一致
         return oldItem == newItem
     }
 }

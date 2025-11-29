@@ -55,14 +55,14 @@ class MainActivity : AppCompatActivity() {
                 StaggeredGridLayoutManager.VERTICAL
             )
             this.layoutManager = layoutManager
-            cardAdapter = CardAdapter(context) { view, cardBean ->
+            cardAdapter = CardAdapter(context) { view, id ->
                 viewModel.touchLove(
                     view,
-                    cardBean
+                    id
                 )
             }              // todo 点击加减爱心事件
             adapter = cardAdapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {//监听状态改变
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val intArray = IntArray(2)
@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                         viewModel.loadData()
                     }
                 }
-
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化
@@ -79,13 +78,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.loadData()//init
-        Log.d("MainActivity", "initCard:viewMode_linit")
+//        Log.d("MainActivity", "initCard:viewMode_init")
         viewModel.state.observe(this) {
             when (it) {
                 is State.success -> {
                     Log.d("MainActivity", "initCard:state_success")
                     cardAdapter.submitList(it.items)
-                    Log.d("MainActivity", "initCard:${it.items.toString()}")
+                    Log.d("MainActivity", "initCard:${it.items}")
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
                 }
 
