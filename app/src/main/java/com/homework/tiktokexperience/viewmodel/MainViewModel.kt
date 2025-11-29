@@ -21,7 +21,7 @@ class MainViewModel() : ViewModel() {
     private val currentList = mutableListOf<CardBean>()
     private var page = 1
     fun loadData(isRefresh: Boolean = false) {//刷新或者直接加载指定的页面
-        if (isRefresh) innerState.value = State.Loading//刷新实现
+        innerState.value = State.Loading//刷新实现
         viewModelScope.launch {
             if (isRefresh) {//刷新
                 page = 1

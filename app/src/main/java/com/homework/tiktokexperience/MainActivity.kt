@@ -13,6 +13,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -60,20 +61,20 @@ class MainActivity : AppCompatActivity() {
                     view,
                     id
                 )
-            }              // todo 点击加减爱心事件
+            }
             adapter = cardAdapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 //监听状态改变
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
+                    if (dy <= 0) return
                     val intArray = IntArray(2)
                     layoutManager.findLastVisibleItemPositions(intArray)
                     val max = intArray.maxOrNull() ?: return
-                    if (max == cardAdapter.itemCount - 1 || max >= cardAdapter.itemCount - 4) {
+                    if (viewModel.state.value !is State.Loading && max >= cardAdapter.itemCount - 4) {//简单的预加载
                         viewModel.loadData()
                     }
                 }
-
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).setOnRefreshListener {
+        findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).setOnRefreshListener {//刷新监听
             viewModel.loadData(true)
         }
 
