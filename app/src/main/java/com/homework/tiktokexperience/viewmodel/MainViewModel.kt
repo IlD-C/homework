@@ -38,27 +38,19 @@ class MainViewModel() : ViewModel() {
         }
     }
 
-    fun touchLove(view: View, id: String) {
+    fun touchLove(view: View, index: Int) {
         viewModelScope.launch {
-            val flag: Boolean = repository.touchLove(id)
-            val index = currentList.indexOfFirst { it.id == id }
-            currentList[index] = currentList[index].copy(
-                loveCount = if (currentList[index].isLove) currentList[index].loveCount - 1 else currentList[index].loveCount + 1,
-                isLove = !currentList[index].isLove
-            )
-            //乐关更新
-            if (!flag) {//失败回退并提交一次数据
-                Log.d("MainViewModel", "touch:false")
-                var newArrayList = ArrayList(currentList)
-                newArrayList[index] = currentList[index].copy(
-                    loveCount = if (currentList[index].isLove) currentList[index].loveCount - 1 else currentList[index].loveCount + 1,
-                    isLove = !currentList[index].isLove
-                )//确保与老数据在需要替换的位置不一样
-                Log.d("MainViewModel", "false:islove=${newArrayList[index].isLove}")
-                innerState.value = State.success(newArrayList) //先提交差异版本再更新老版本
-                currentList[index] = newArrayList[index]
+            if (index == -1) return@launch
+            val old = currentList[index]
+            val flag = repository.touchLove(old.id)  // 先请求
+            if (flag) { // 只在成功时更新数据
+                val new = old.copy(
+                    loveCount = if (old.isLove) old.loveCount - 1 else old.loveCount + 1,
+                    isLove = !old.isLove
+                )
+                currentList[index] = new
+                innerState.value = State.success(currentList.toList())
             }
-            Log.d("MainViewModel", "flag:$flag")
         }
     }
 }

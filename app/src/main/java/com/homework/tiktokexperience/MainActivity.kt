@@ -62,15 +62,18 @@ class MainActivity : AppCompatActivity() {
                 )
             }              // todo 点击加减爱心事件
             adapter = cardAdapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {//监听状态改变
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                //监听状态改变
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val intArray = IntArray(2)
                     layoutManager.findLastVisibleItemPositions(intArray)
-                    if (intArray.maxOrNull() == cardAdapter.itemCount - 1) {
+                    val max = intArray.maxOrNull() ?: return
+                    if (max == cardAdapter.itemCount - 1 || max >= cardAdapter.itemCount - 4) {
                         viewModel.loadData()
                     }
                 }
+
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化

@@ -1,7 +1,6 @@
-package com.homework.tiktokexperience.network
+package com.homework.tiktokexperience.mock
 
 import android.content.Context
-import android.util.JsonReader
 import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Protocol
@@ -11,10 +10,11 @@ import org.json.JSONObject
 import kotlin.random.Random
 
 class MockInterceptor(private val context: Context) : Interceptor {
+    private var count: Int = 30
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val url = request.url().toString()
-        if (url.contains("page.json")) {
+        if (url.contains("page.json") && count > 0) {
             Log.d("MockInterceptor", "intercept: page.json")
 
             //修改json，模拟唯一的信息id
@@ -26,7 +26,7 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 item.put("id", Random.nextInt(10000000, 99999999).toString())
             }
             json = jsonObject.toString()
-
+            count--;
             return Response.Builder()
                 .protocol(Protocol.HTTP_1_1)
                 .code(200)
@@ -41,7 +41,7 @@ class MockInterceptor(private val context: Context) : Interceptor {
         }
         if (url.contains("love")) {
             var json = readJsonFromAssets("click.json")
-            val flag: Boolean = Random.nextInt(1, 10) < 0// 失败出现比例调整
+            val flag: Boolean = Random.nextInt(1, 10) > 2// 失败出现比例调整
             Log.d("MockInterceptor", "intercept: love->$flag")
             val jsonObject: JSONObject =
                 JSONObject(json).put("success", flag)//随机点赞失败

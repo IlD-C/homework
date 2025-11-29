@@ -1,6 +1,7 @@
 package com.homework.tiktokexperience.network
 
 import com.homework.tiktokexperience.app.App
+import com.homework.tiktokexperience.mock.MockInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

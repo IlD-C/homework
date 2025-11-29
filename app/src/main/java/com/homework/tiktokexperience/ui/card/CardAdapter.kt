@@ -1,6 +1,7 @@
 package com.homework.tiktokexperience.ui.card
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.homework.tiktokexperience.R
 
-class CardAdapter(context: Context, private val onItemClick: (View, String) -> Unit) :
+class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit) :
     ListAdapter<CardBean, CardAdapter.CardViewHolder>(CardDiffCallback()) {
     private val itemWidth: Int//item宽度px
 
@@ -40,13 +41,13 @@ class CardAdapter(context: Context, private val onItemClick: (View, String) -> U
         init {
             loveIcon.setOnClickListener { v ->
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    loveIcon.isSelected = !loveIcon.isSelected//暂时改变
-                    Log.d("CardAdapter", "loveIcon.isSelected: ${loveIcon.isSelected}")
-                    val newCount =
-                        loveCount.text.toString().toInt() + if (loveIcon.isSelected) 1 else -1;
-                    loveCount.text = newCount.toString()//string_format改造
-                    val bean: CardBean = getItem(bindingAdapterPosition)
-                    onItemClick(v, bean.id)
+//                    loveIcon.isSelected = !loveIcon.isSelected//暂时改变
+//                    Log.d("CardAdapter", "loveIcon.isSelected: ${loveIcon.isSelected}")
+//                    val newCount =
+//                        loveCount.text.toString().toInt() + if (loveIcon.isSelected) 1 else -1;
+//                    loveCount.text = newCount.toString()//string_format改造
+//                    val bean: CardBean = getItem(bindingAdapterPosition)
+                    onItemClick(v, bindingAdapterPosition)
                 }
             }
         }
@@ -81,6 +82,11 @@ class CardAdapter(context: Context, private val onItemClick: (View, String) -> U
                 .fallback(R.drawable.default_background)
                 .into(image)
         }
+
+        fun checkLove(isLove: Boolean, loveCount: Int) {
+            loveIcon.isSelected = isLove
+            this.loveCount.text = loveCount.toString()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -93,6 +99,21 @@ class CardAdapter(context: Context, private val onItemClick: (View, String) -> U
         Log.d("CardAdapter", "onBindViewHolder: $position")
         holder.bind(position)
     }
+
+    override fun onBindViewHolder(
+        holder: CardViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            var bundle = payloads[0] as Bundle
+            if (bundle.getBoolean("change")) {
+                holder.checkLove(bundle.getBoolean("isLove"), bundle.getInt("loveCount"))
+            }
+        }
+    }
 }
 
 class CardDiffCallback : DiffUtil.ItemCallback<CardBean>() {
@@ -102,5 +123,17 @@ class CardDiffCallback : DiffUtil.ItemCallback<CardBean>() {
 
     override fun areContentsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {//所有内容一致
         return oldItem == newItem
+    }
+
+    override fun getChangePayload(oldItem: CardBean, newItem: CardBean): Any? {
+        val bundle = Bundle()
+        if (oldItem.loveCount != newItem.loveCount ||
+            oldItem.isLove != newItem.isLove
+        ) {
+            bundle.putBoolean("change", true)
+            bundle.putInt("loveCount", newItem.loveCount)
+            bundle.putBoolean("isLove", newItem.isLove)
+        }
+        return if (bundle.isEmpty) null else bundle
     }
 }

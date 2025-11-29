@@ -12,6 +12,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.homework.tiktokexperience.R
 
+
+// 测试类
 class TestAdapter(private val context: Context, var data: List<CardBean>) :
     RecyclerView.Adapter<TestAdapter.ViewHolder>() {
 
@@ -76,10 +78,9 @@ class TestAdapter(private val context: Context, var data: List<CardBean>) :
     }
 
     private fun imageTrans(imageView: ImageView, imageUrl: Int) {//图片转换
-        // 使用 Kotlin
         Glide.with(imageView.context)
             .load(imageUrl)
             .apply(RequestOptions.bitmapTransform(CircleCrop()))
-            .into(imageView) // ImageView
+            .into(imageView)
     }
 }

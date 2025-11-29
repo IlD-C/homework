@@ -28,7 +28,6 @@ class TopMenuAdapter(private var menu: List<String>) :
         holder.itemView.setOnClickListener {
             val previousPosition = selectPosition
             selectPosition = holder.bindingAdapterPosition
-            // 4. 局部刷新：通知旧的变回普通，通知新的变成选中
             notifyItemChanged(previousPosition)
             notifyItemChanged(selectPosition)
         }

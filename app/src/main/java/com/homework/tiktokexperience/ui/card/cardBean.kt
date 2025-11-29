@@ -1,6 +1,5 @@
 package com.homework.tiktokexperience.ui.card
 
-import java.net.URL
 
 data class CardBean(
     val id: String,//唯一id
