@@ -1,11 +1,14 @@
 package com.homework.tiktokexperience.network
 
 import android.content.Context
+import android.util.JsonReader
 import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.*
+import org.json.JSONObject
+import kotlin.random.Random
 
 class MockInterceptor(private val context: Context):Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -13,7 +16,16 @@ class MockInterceptor(private val context: Context):Interceptor {
         val url = request.url().toString()
         if(url.contains("page.json")){
             Log.d("MockInterceptor", "intercept: page.json")
-            val json = readJsonFromAssets("test.json")
+
+            var json = readJsonFromAssets("test.json")
+            var jsonObject = JSONObject(json)
+            var jsonArray = jsonObject.getJSONArray("data")
+            for (i in 0 until jsonArray.length()) {
+                val item = jsonArray.getJSONObject(i)
+                item.put("id", Random.nextInt(10000000,99999999).toString())
+            }
+            json = jsonObject.toString()
+            //修改json，模拟唯一的信息id
             return Response.Builder()
                 .protocol(Protocol.HTTP_1_1)
                 .code(200)
