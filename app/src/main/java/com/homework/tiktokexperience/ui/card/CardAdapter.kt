@@ -24,6 +24,9 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
     private var maxPreLoadPosition = 0;//预加载最大位置
     var line: Int = 2
         private set
+    /**
+     * 设置列数转换
+     */
     fun changeLine() {
         if (line == 2) {
             itemWidth = (screenWidth - marginWidth / 2);
@@ -34,7 +37,7 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
         }
         notifyDataSetChanged()//重新计算
     }
-
+    //屏幕dp-px换算
     private fun dp2px(context: Context, dpValue: Float): Int {
         val scale = context.resources.displayMetrics.density// 屏幕密度
         return (dpValue * scale + 0.5f).toInt()
@@ -62,9 +65,11 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
             }
         }
 
+        //绑定页面
         fun bind(position: Int) {
             val bean: CardBean = getItem(position)
             Log.d("CardAdapter", "bind: $bean")
+            //由屏幕尺寸计算自适应的图片高
             var ratio: Double = 1.0 * bean.imageHigh / bean.imageWidth
             if (ratio < 0.7) {//自适应的图片高
                 ratio = 0.7
@@ -72,6 +77,7 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
                 ratio = 1.3
             }
             val targetHeight: Int = (itemWidth * ratio).toInt()
+
             title.text = bean.title
             name.text = bean.name
             loveCount.text = bean.loveCount.toString()
@@ -108,6 +114,7 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         Log.d("CardAdapter", "onBindViewHolder: $position")
         holder.bind(position)
+        //利用预加载的最大位置实现记忆化的预加载
         for (index in maxPreLoadPosition until Math.min(itemCount, position + 5)) {
             var nextItem = getItem(index)
             Glide.with(holder.View.context)
@@ -153,7 +160,7 @@ class CardDiffCallback : DiffUtil.ItemCallback<CardBean>() {
     override fun areContentsTheSame(oldItem: CardBean, newItem: CardBean): Boolean {//所有内容一致
         return oldItem == newItem
     }
-
+    //获取局部差异实现局部更新
     override fun getChangePayload(oldItem: CardBean, newItem: CardBean): Any? {
         val bundle = Bundle()
         if (oldItem.loveCount != newItem.loveCount ||

@@ -7,7 +7,7 @@ import com.homework.tiktokexperience.model.cardPageData
 import com.homework.tiktokexperience.network.CardNetWork
 import com.homework.tiktokexperience.ui.card.CardBean
 
-object MyRepository {
+object MyRepository {//未设置数据库，，只封装网络请求
 
     suspend fun getPage(page: Int): Result<List<CardBean>> {
         try {

@@ -19,11 +19,11 @@ class MainViewModel() : ViewModel() {
     private val innerState = MutableLiveData<State>()
     val state: LiveData<State> = innerState//暴露不可变版本的引用
     private val currentList = mutableListOf<CardBean>()
-    private var page = 1
+    private var page = 1//记忆页面
     fun loadData(isRefresh: Boolean = false) {//刷新或者直接加载指定的页面
         innerState.value = State.Loading//刷新实现
         viewModelScope.launch {
-            if (isRefresh) {//刷新
+            if (isRefresh) {//刷新时重置页数
                 page = 1
                 currentList.clear()
             }
@@ -39,7 +39,7 @@ class MainViewModel() : ViewModel() {
     }
 
     fun touchLove(view: View, index: Int) {
-        viewModelScope.launch {
+        viewModelScope.launch {//协程开启异步监听
             if (index == -1) return@launch
             val old = currentList[index]
             val flag = repository.touchLove(old.id)  // 先请求

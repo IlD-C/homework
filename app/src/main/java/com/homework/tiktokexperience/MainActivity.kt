@@ -44,21 +44,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun initCard() {
-//        var cardBean = CardBean("",
-//            "https://picsum.photos/200/300",
-//            1,1,
-//            "标题",
-//            "https://picsum.photos/200/300",
-//            "用户名",
-//            9999
-//        )
-//        val listOf = listOf(cardBean, cardBean, cardBean, cardBean, cardBean)
         val cardAdapter: CardAdapter
         val LayoutManager = StaggeredGridLayoutManager(
             2,
             StaggeredGridLayoutManager.VERTICAL
         )
-
+        //
         val recyclerView = findViewById<RecyclerView>(R.id.card_recyclerview).apply {
             this.layoutManager = LayoutManager
             cardAdapter = CardAdapter(context) { view, id ->
@@ -68,6 +59,9 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             adapter = cardAdapter
+            /**
+             * 滑动加载与简单的卡片预加载
+             */
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 //监听状态改变
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -80,13 +74,15 @@ class MainActivity : AppCompatActivity() {
                         viewModel.loadData()
                     }
                 }
-
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化
             })
 
         }
+        /**
+         * 设置双击切换监听
+         */
         gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onDown(e: MotionEvent): Boolean {
                 return true
@@ -106,9 +102,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-        viewModel.loadData()//init
+        /**
+         * 设置状态改变监听与下拉刷新监听
+         */
+        viewModel.loadData()//界面初始化
 //        Log.d("MainActivity", "initCard:viewMode_init")
+
         viewModel.state.observe(this) {
             when (it) {
                 is State.success -> {
