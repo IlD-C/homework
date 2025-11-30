@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -116,10 +117,14 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MainActivity", "initCard:${it.items}")
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
                 }
+
                 is State.Loading -> {//todo loading显示一定时常自动停止
                 }
+
                 is State.Error -> {
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
+                    Log.d("MainActivity", "initCard:state_error")
+                    Toast.makeText(this, it.msg, Toast.LENGTH_SHORT).show();// 返回错误信息给i他
                 }
             }
 

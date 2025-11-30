@@ -33,7 +33,7 @@ class MainViewModel() : ViewModel() {
                 innerState.value = State.success(currentList.toList())//将currentList转换为不可变列表且为新表
                 page++
             } else {
-                innerState.value = State.Error("Unknown error")
+                innerState.value = State.Error("Net error")
             }
         }
     }
