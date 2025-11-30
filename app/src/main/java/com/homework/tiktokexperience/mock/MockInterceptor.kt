@@ -27,6 +27,7 @@ class MockInterceptor(private val context: Context) : Interceptor {
             }
             json = jsonObject.toString()
             count--;
+            Thread.sleep(Random.nextLong(500, 1000))//随机网络延迟
             return Response.Builder()
                 .protocol(Protocol.HTTP_1_1)
                 .code(200)

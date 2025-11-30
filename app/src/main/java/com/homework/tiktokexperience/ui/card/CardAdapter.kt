@@ -18,11 +18,21 @@ import com.homework.tiktokexperience.R
 
 class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit) :
     ListAdapter<CardBean, CardAdapter.CardViewHolder>(CardDiffCallback()) {
-    private val itemWidth: Int//item宽度px
-
-    init {
-        val screenWidth = context.resources.displayMetrics.widthPixels//屏幕宽度px
-        itemWidth = (screenWidth - dp2px(context, 16f)) / 2;//减去4个margin
+    private val screenWidth = context.resources.displayMetrics.widthPixels//屏幕宽度px
+    private val marginWidth: Int = dp2px(context, 16f)//减去4个margin
+    private var itemWidth: Int = (screenWidth - marginWidth) / 2;//item宽度px
+    private var maxPreLoadPosition = 0;//预加载最大位置
+    var line: Int = 2
+        private set
+    fun changeLine() {
+        if (line == 2) {
+            itemWidth = (screenWidth - marginWidth / 2);
+            line = 1;
+        } else {
+            itemWidth = (screenWidth - marginWidth) / 2
+            line = 2;
+        }
+        notifyDataSetChanged()//重新计算
     }
 
     private fun dp2px(context: Context, dpValue: Float): Int {
@@ -30,7 +40,7 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
         return (dpValue * scale + 0.5f).toInt()
     }
 
-    inner class CardViewHolder(var itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CardViewHolder(val View: View) : RecyclerView.ViewHolder(View) {
         private val image: ImageView = itemView.findViewById(R.id.cardImage)
         private val title: TextView = itemView.findViewById(R.id.cardTitle)
         private val icon: ImageView = itemView.findViewById(R.id.userIcon)
@@ -66,14 +76,14 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
             name.text = bean.name
             loveCount.text = bean.loveCount.toString()
             loveIcon.isSelected = bean.isLove//获取是否点赞过
-            Glide.with(itemView.context)
+            Glide.with(View.context)
                 .load(bean.iconURL)
                 .apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .placeholder(R.drawable.default_background)
                 .error(R.drawable.default_background)
                 .fallback(R.drawable.default_background)
                 .into(icon) // 头像加载
-            Glide.with(itemView.context)
+            Glide.with(View.context)
                 .load(bean.imageURL)
                 .override(itemWidth, targetHeight)
                 .centerCrop()
@@ -98,6 +108,25 @@ class CardAdapter(context: Context, private val onItemClick: (View, Int) -> Unit
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         Log.d("CardAdapter", "onBindViewHolder: $position")
         holder.bind(position)
+        for (index in maxPreLoadPosition until Math.min(itemCount, position + 5)) {
+            var nextItem = getItem(index)
+            Glide.with(holder.View.context)
+                .load(nextItem.imageURL)
+                .placeholder(R.drawable.default_background)
+                .error(R.drawable.default_background)
+                .fallback(R.drawable.default_background)
+                .preload()
+        }
+        maxPreLoadPosition = Math.min(itemCount, position + 5)
+    }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<CardBean>,
+        currentList: MutableList<CardBean>
+    ) {
+        super.onCurrentListChanged(previousList, currentList)
+        Log.d("CardAdapter", "onCurrentListChanged: $currentList")
+        maxPreLoadPosition = 0
     }
 
     override fun onBindViewHolder(

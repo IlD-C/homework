@@ -3,6 +3,8 @@ package com.homework.tiktokexperience
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,7 +15,6 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -25,6 +26,7 @@ import com.homework.tiktokexperience.viewmodel.State
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var gestureDetector: GestureDetector
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         initCard()
     }
 
+
     private fun initCard() {
 //        var cardBean = CardBean("",
 //            "https://picsum.photos/200/300",
@@ -50,12 +53,13 @@ class MainActivity : AppCompatActivity() {
 //        )
 //        val listOf = listOf(cardBean, cardBean, cardBean, cardBean, cardBean)
         val cardAdapter: CardAdapter
+        val LayoutManager = StaggeredGridLayoutManager(
+            2,
+            StaggeredGridLayoutManager.VERTICAL
+        )
+
         val recyclerView = findViewById<RecyclerView>(R.id.card_recyclerview).apply {
-            val layoutManager = StaggeredGridLayoutManager(
-                2,
-                StaggeredGridLayoutManager.VERTICAL
-            )
-            this.layoutManager = layoutManager
+            this.layoutManager = LayoutManager
             cardAdapter = CardAdapter(context) { view, id ->
                 viewModel.touchLove(
                     view,
@@ -69,17 +73,38 @@ class MainActivity : AppCompatActivity() {
                     super.onScrolled(recyclerView, dx, dy)
                     if (dy <= 0) return
                     val intArray = IntArray(2)
-                    layoutManager.findLastVisibleItemPositions(intArray)
+                    LayoutManager.findLastVisibleItemPositions(intArray)
                     val max = intArray.maxOrNull() ?: return
                     if (viewModel.state.value !is State.Loading && max >= cardAdapter.itemCount - 4) {//简单的预加载
                         viewModel.loadData()
                     }
                 }
+
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                 }//todo滑动条件变化
             })
+
         }
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent): Boolean {
+                return true
+            }
+
+            override fun onDoubleTap(e: MotionEvent): Boolean {
+                Log.d("MainActivity", "Card:longClick")
+                cardAdapter.changeLine()
+                LayoutManager.spanCount = cardAdapter.line
+                return true
+            }
+        })
+        recyclerView.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                gestureDetector.onTouchEvent(e)
+                return false
+            }
+        })
+
 
         viewModel.loadData()//init
 //        Log.d("MainActivity", "initCard:viewMode_init")
@@ -91,11 +116,8 @@ class MainActivity : AppCompatActivity() {
                     Log.d("MainActivity", "initCard:${it.items}")
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
                 }
-
                 is State.Loading -> {//todo loading显示一定时常自动停止
-
                 }
-
                 is State.Error -> {
                     findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout).isRefreshing = false
                 }
